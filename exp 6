@@ -1,0 +1,16 @@
+from sklearn.linear_model import LinearRegression [cite: 798]
+from sklearn.preprocessing import OrdinalEncoder [cite: 795]
+from sklearn.feature_extraction import DictVectorizer [cite: 797]
+
+# Encoding Categorical Features
+ordinal_columns = ['Property_Type', 'Furnished_Status', 'Public_Transport_Accessibility', 'Facing', 'Security'] [cite: 1001]
+encoder = OrdinalEncoder(categories=categories) [cite: 1009]
+df[ordinal_columns] = encoder.fit_transform(df[ordinal_columns]) [cite: 1010]
+
+# DictVectorizer for remaining categorical data
+train_dicts = X_train.to_dict(orient='records') [cite: 1152]
+dv = DictVectorizer(sparse=False) [cite: 1154]
+X_train_vec = dv.fit_transform(train_dicts) [cite: 1155]
+
+# Linear Regression Training
+# model_results evaluation shows R2: 0.0518 [cite: 1168, 1172]

@@ -1,0 +1,7 @@
+echo "# ml" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/Ruturaj011/ml.git
+git push -u origin mainfydegquigfucv24tui25v7t8FGVYU3RG FY 

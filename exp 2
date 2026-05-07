@@ -1,0 +1,25 @@
+import pandas as pd [cite: 49]
+from sklearn.feature_extraction.text import TfidfVectorizer [cite: 50]
+from sklearn.model_selection import train_test_split [cite: 51]
+from sklearn.naive_bayes import MultinomialNB [cite: 52]
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix [cite: 53]
+
+# Sample Dataset
+data = {
+    "email": ["Congratulations! You won a free lottery ticket", "Hi John, can we meet tomorrow?", "Claim your free prize now", ...], [cite: 55-68]
+    "label": ["spam", "ham", "spam", "ham", "spam", "ham", "spam", "ham", "spam", "ham", "spam"] [cite: 69-71]
+}
+df = pd.DataFrame(data) [cite: 74]
+
+# Split and Vectorize
+X_train, X_test, y_train, y_test = train_test_split(df["email"], df["label"], test_size=0.3, random_state=42) [cite: 76-80]
+vectorizer = TfidfVectorizer(stop_words='english') [cite: 82]
+X_train_vec = vectorizer.fit_transform(X_train) [cite: 83]
+X_test_vec = vectorizer.transform(X_test) [cite: 84]
+
+# Train and Evaluate
+model = MultinomialNB() [cite: 86]
+model.fit(X_train_vec, y_train) [cite: 87]
+y_pred = model.predict(X_test_vec) [cite: 89]
+
+print("Accuracy:", accuracy_score(y_test, y_pred)) [cite: 90]

@@ -1,0 +1,19 @@
+from sklearn.linear_model import LogisticRegression [cite: 749]
+import pickle [cite: 755]
+
+# Model Training
+logreg = LogisticRegression() [cite: 750]
+logreg.fit(X, y) [cite: 751]
+
+# Save and Load Model
+with open("iris_model.pkl", "wb") as file: [cite: 757]
+    pickle.dump(logreg, file) [cite: 758]
+
+# Prediction from User Input
+model = pickle.load(open("iris_model.pkl", "rb")) [cite: 768]
+sepal_length = float(input("Enter Sepal Length: ")) [cite: 770]
+# ... (other inputs)
+features_df = pd.DataFrame([[sepal_length, sepal_width, petal_length, petal_width]], 
+                           columns=['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']) [cite: 776, 777]
+prediction = model.predict(features_df) [cite: 778, 779]
+print("Predicted Species:", prediction[0]) [cite: 781]

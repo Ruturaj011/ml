@@ -1,7 +1,35 @@
-echo "# ml" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/Ruturaj011/ml.git
-git push -u origin mainfydegquigfucv24tui25v7t8FGVYU3RG FY 
+import pandas as pd [cite: 3]
+import numpy as np [cite: 4]
+import matplotlib.pyplot as plt [cite: 5]
+import seaborn as sns [cite: 6]
+from sklearn.cluster import KMeans [cite: 7]
+from sklearn.preprocessing import StandardScaler [cite: 8]
+
+# Load and prepare data
+df = pd.read_csv('/content/Mall_Customers (1).csv') [cite: 10]
+X = df[['Annual Income (k$)', 'Spending Score (1-100)']] [cite: 14]
+
+# Feature Scaling
+scaler = StandardScaler() [cite: 16]
+X_scaled = scaler.fit_transform(X) [cite: 17]
+
+# Elbow Method to find optimal clusters
+wcss = [] [cite: 19]
+for i in range(1, 11): [cite: 20]
+    kmeans = KMeans(n_clusters=i, random_state=42) [cite: 21]
+    kmeans.fit(X_scaled) [cite: 22]
+    wcss.append(kmeans.inertia_) [cite: 23]
+
+# Plot Elbow Graph
+plt.plot(range(1, 11), wcss, marker='o') [cite: 26]
+plt.show() [cite: 30]
+
+# Apply K-Means with k=5
+kmeans = KMeans(n_clusters=5, random_state=42) [cite: 32]
+clusters = kmeans.fit_predict(X_scaled) [cite: 33]
+df['Cluster'] = clusters [cite: 35]
+
+# Visualize Results
+sns.scatterplot(x=df['Annual Income (k$)'], y=df['Spending Score (1-100)'], hue=df['Cluster'], palette='Set1', s=100) [cite: 39-45]
+plt.title('Customer Segments') [cite: 46]
+plt.show() [cite: 47]

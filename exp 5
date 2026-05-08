@@ -1,19 +1,81 @@
-from sklearn.linear_model import LogisticRegression [cite: 749]
-import pickle [cite: 755]
-
-# Model Training
-logreg = LogisticRegression() [cite: 750]
-logreg.fit(X, y) [cite: 751]
-
-# Save and Load Model
-with open("iris_model.pkl", "wb") as file: [cite: 757]
-    pickle.dump(logreg, file) [cite: 758]
-
-# Prediction from User Input
-model = pickle.load(open("iris_model.pkl", "rb")) [cite: 768]
-sepal_length = float(input("Enter Sepal Length: ")) [cite: 770]
-# ... (other inputs)
-features_df = pd.DataFrame([[sepal_length, sepal_width, petal_length, petal_width]], 
-                           columns=['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']) [cite: 776, 777]
-prediction = model.predict(features_df) [cite: 778, 779]
-print("Predicted Species:", prediction[0]) [cite: 781]
+# Importing Dependencies
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+# Load Dataset
+df = pd.read_csv("/content/E05_Iris-flower_Dataset.csv")
+# Display dataset
+print(df)
+# Shape of dataset
+print(df.shape)
+# Statistical Summary
+print(df.describe())
+# Mean values grouped by Species
+print(df.groupby('Species').mean())
+# Scatter Plot
+sns.scatterplot(
+x='SepalLengthCm',
+y='SepalWidthCm',
+hue='Species',
+data=df
+)
+plt.show()
+# Line Plot
+sns.lineplot(data=df.drop(['Species'], axis=1))
+plt.show()
+# Remove Species column
+df1 = df.drop('Species', axis=1)
+print(df1)
+# KDE Plot
+g = sns.FacetGrid(df, col='Species')
+g = g.map(sns.kdeplot, 'SepalLengthCm')
+# Pair Plot
+sns.pairplot(df)
+# Drop Id column
+df.drop('Id', axis=1, inplace=True)
+# MACHINE LEARNING
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
+# Features and Target
+X = df.drop('Species', axis=1)
+y = df['Species']
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(
+X,
+y,
+test_size=0.3,
+random_state=42,
+stratify=y
+)
+# Logistic Regression
+logreg = LogisticRegression()
+logreg.fit(X, y)
+y_pred = logreg.predict(X_test)
+print(accuracy_score(y_test, y_pred))
+# Save Model
+import pickle
+with open("iris_model.pkl", "wb") as file:
+    pickle.dump(logreg, file)
+print("Model saved successfully!")
+# Load Model
+model = pickle.load(open("iris_model.pkl", "rb"))
+# User Input
+sepal_length = float(input("Enter Sepal Length: "))
+sepal_width = float(input("Enter Sepal Width: "))
+petal_length = float(input("Enter Petal Length: "))
+petal_width = float(input("Enter Petal Width: "))
+# Create DataFrame
+features_df = pd.DataFrame(
+[[sepal_length, sepal_width, petal_length, petal_width]],
+columns=[
+'SepalLengthCm',
+'SepalWidthCm',
+'PetalLengthCm',
+'PetalWidthCm'
+]
+)
+# Predict Species
+prediction = model.predict(features_df)
+print("Predicted Species:", prediction[0])

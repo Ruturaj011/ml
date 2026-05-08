@@ -1,24 +1,100 @@
-import networkx as nx [cite: 1181]
+import numpy as np
+import matplotlib.pyplot as plt
+import networkx as nx
 
-class ManufacturingProcess: [cite: 1202]
-    def __init__(self, trans_mat, init_stt, stt): [cite: 1203]
-        self.trans_mat = trans_mat [cite: 1204]
-        self.curr_stt = init_stt [cite: 1205]
-        self.stt = stt [cite: 1206]
-        self.hist = [init_stt] [cite: 1207]
+class ManufacturingProcess:
+    def __init__(self, trans_mat, init_stt, stt):
+        self.trans_mat = trans_mat
+        self.curr_stt = init_stt
+        self.stt = stt
+        self.hist = [init_stt]
 
-    def step(self): [cite: 1208]
-        self.curr_stt = np.random.choice(len(self.stt), p=self.trans_mat[self.curr_stt]) [cite: 1209, 1212]
-        self.hist.append(self.curr_stt) [cite: 1213]
+    def step(self):
+        self.curr_stt = np.random.choice(
+            len(self.stt),
+            p=self.trans_mat[self.curr_stt]
+        )
+        self.hist.append(self.curr_stt)
 
-    def sim(self, num_stp): [cite: 1214]
-        for i in range(num_stp): [cite: 1217]
-            self.step() [cite: 1218]
-            if self.curr_stt == 2: break # Finished Product [cite: 1221, 1222]
+    def sim(self, num_stp):
+        print("Simulation Started")
+        print("Initial State:", self.stt[self.curr_stt])
+        for i in range(num_stp):
+            self.step()
+            print(f"Step {i+1}: {self.stt[self.curr_stt]}")
+            # Stop if Finished Product reached
+            if self.curr_stt == 2:
+                print("Reached Finished Product.")
+                break
+        print("Simulation Finished.")
 
-# Define Transition Probabilities
+    def plot_sim(self):
+        plt.plot(self.hist, marker='o')
+        plt.yticks([0, 1, 2], self.stt)
+        plt.xlabel("Steps")
+        plt.ylabel("State")
+        plt.title("State Transition Over Time")
+        plt.grid()
+        plt.show()
+
+    def draw_graph(self):
+        G = nx.DiGraph()
+        # Add edges
+        for i in range(len(self.stt)):
+            for j in range(len(self.stt)):
+                prob = self.trans_mat[i][j]
+                if prob > 0:
+                    G.add_edge(
+                        self.stt[i],
+                        self.stt[j],
+                        weight=prob
+                    )
+        pos = nx.spring_layout(G, seed=42)
+        nx.draw(
+            G,
+            pos,
+            with_labels=True,
+            node_color='lightblue',
+            node_size=3000,
+            font_size=10
+        )
+        edge_labels = {
+            (self.stt[i], self.stt[j]): f"{self.trans_mat[i][j]:.2f}"
+            for i in range(len(self.stt))
+            for j in range(len(self.stt))
+            if self.trans_mat[i][j] > 0
+        }
+        nx.draw_networkx_edge_labels(
+            G,
+            pos,
+            edge_labels=edge_labels
+        )
+        plt.title("Manufacturing Process - Markov Chain")
+        plt.show()
+
+# Transition Matrix
 trans_mat = np.array([
-    [0.7, 0.2, 0.1], # Raw Material [cite: 1254]
-    [0.1, 0.6, 0.3], # Work in Progress [cite: 1255]
-    [0.0, 0.0, 1.0]  # Finished Product [cite: 1256]
+    [0.7, 0.2, 0.1],
+    [0.1, 0.6, 0.3],
+    [0.0, 0.0, 1.0]
 ])
+# States
+stt = [
+    "Raw Material",
+    "Work in Progress",
+    "Finished Product"
+]
+# Initial State
+init_stt = 0
+# Create Object
+process = ManufacturingProcess(
+    trans_mat,
+    init_stt,
+    stt
+)
+# Run Simulation
+process.sim(20)
+# Plot State Transitions
+process.plot_sim()
+# Draw Markov Chain Graph
+process.draw_graph()

@@ -1,25 +1,50 @@
-import pandas as pd [cite: 49]
-from sklearn.feature_extraction.text import TfidfVectorizer [cite: 50]
-from sklearn.model_selection import train_test_split [cite: 51]
-from sklearn.naive_bayes import MultinomialNB [cite: 52]
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix [cite: 53]
-
-# Sample Dataset
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+# 1. Sample Dataset
 data = {
-    "email": ["Congratulations! You won a free lottery ticket", "Hi John, can we meet tomorrow?", "Claim your free prize now", ...], [cite: 55-68]
-    "label": ["spam", "ham", "spam", "ham", "spam", "ham", "spam", "ham", "spam", "ham", "spam"] [cite: 69-71]
+    "email": [
+        "Congratulations! You won a free lottery ticket",
+        "Hi John, can we meet tomorrow?",
+        "Claim your free prize now",
+        "Please review the attached report",
+        "Win cash now!!",
+        "Let's schedule a meeting",
+        "Get free entry into our contest",
+        "Project deadline is tomorrow",
+        "Earn money fast and easy",
+        "Lunch at 1 pm?",
+        "You have won $5000! Click here to claim now"
+    ],
+    "label": [
+        "spam", "ham", "spam", "ham", "spam",
+        "ham", "spam", "ham", "spam", "ham", "spam"
+    ]
 }
-df = pd.DataFrame(data) [cite: 74]
-
-# Split and Vectorize
-X_train, X_test, y_train, y_test = train_test_split(df["email"], df["label"], test_size=0.3, random_state=42) [cite: 76-80]
-vectorizer = TfidfVectorizer(stop_words='english') [cite: 82]
-X_train_vec = vectorizer.fit_transform(X_train) [cite: 83]
-X_test_vec = vectorizer.transform(X_test) [cite: 84]
-
-# Train and Evaluate
-model = MultinomialNB() [cite: 86]
-model.fit(X_train_vec, y_train) [cite: 87]
-y_pred = model.predict(X_test_vec) [cite: 89]
-
-print("Accuracy:", accuracy_score(y_test, y_pred)) [cite: 90]
+df = pd.DataFrame(data)
+# 2. Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(
+    df["email"],
+    df["label"],
+    test_size=0.3,
+    random_state=42
+)
+# 3. Convert Text to Numbers
+vectorizer = TfidfVectorizer(stop_words="english")
+X_train_vec = vectorizer.fit_transform(X_train)
+X_test_vec = vectorizer.transform(X_test)
+# 4. Train Model
+model = MultinomialNB()
+model.fit(X_train_vec, y_train)
+# 5. Evaluate Model
+y_pred = model.predict(X_test_vec)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+# 6. Test with New Email
+new_email = ["You have won $5000! Click here to claim now"]
+new_email_vec = vectorizer.transform(new_email)
+prediction = model.predict(new_email_vec)
+print("\nNew Email Prediction:", prediction[0])
